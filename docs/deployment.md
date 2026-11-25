@@ -70,6 +70,18 @@ Create an environment named `production`. Set `DEPLOY_ENABLED` as a repository v
 
 Publishing requires GitHub Actions/package policies to allow `GITHUB_TOKEN` package writes. This workflow builds `linux/amd64`; ARM servers need a separate image build configuration.
 
+## Audit the server
+
+From a copy of this repository on the server, run:
+
+```bash
+sudo bash deploy/security-audit.sh sous.example.com sous-deploy
+```
+
+Use your deployed hostname and SSH deploy account. The audit checks SSH defaults, private file permissions, port 5050 bindings, the local HTTPS login gate, certificate expiry, and the APT upgrade timer. It prints a local report without making changes or displaying credentials. Exit code `1` indicates a failed check. Review warnings even when the exit code is `0`.
+
+Review AWS security groups, IAM, and public reachability separately. The script does not check package CVEs or verify which security updates were applied.
+
 ## Persistence, rollback and restarts
 
 The base [Compose file](../compose.yaml) and [production override](../compose.production.yaml) mount the same `sous-instance` volume. Keep `DEPLOY_PROJECT` consistent: for project `sous`, the default volume is `sous_sous-instance`. Before migrating an existing install, inspect its actual Compose project/volume identity and back up its data. Changing the project name can create a fresh volume. Never use `down -v` to deploy.
