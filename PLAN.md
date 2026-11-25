@@ -68,6 +68,10 @@ User also requested snapshot frequency settings:10-second default,15-second maxi
 
 Implement [AWS live voice](docs/voice.md) on feature/conversational-voice, created after pulling main. User chose existing AWS credentials and back-and-forth speech with interruption. Opus owns secure duplex backend; Luna owns opt-in audio UI and voice Settings. Codex coordinates, reviews, verifies synthetic tests and Docker, and commits milestones. Preserve unrelated brag-output/. Voice uses server-authoritative recipe context without changing cooking state. Real AWS audio and microphone remain for the user's final trial.
 
+## GitHub Actions and host deployment
+
+User requested a new branch from main for CI/CD and selected one Linux server with host Nginx. On feature/github-actions, add unit/synthetic socket checks, a smoke-tested GHCR image and an opt-in serialized SSH deployment by digest. Preserve loopback binding, one worker, named volume and shutdown grace period. Add opt-in exact trusted hosts/proxy handling and health checks, retaining CSRF/origin validation. Document setup and rollback in [deployment](docs/deployment.md). No live server deployment is part of branch preparation.
+
 ## References
 
 - [Proposal](HAI%20Project%20Proposal.md)

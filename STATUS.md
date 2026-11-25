@@ -2,12 +2,16 @@
 
 ## Current
 
-- Phase: conversational AWS voice delivered on feature/conversational-voice, branched from pulled main (0cadc7a).
-- Active: normal Compose rebuilt and healthy at http://127.0.0.1:5050. Voice is off; vault locked after restart. Persistent settings retained, including the user's5-second snapshot preference.
-- Blockers: none for delivery. Claude quota interrupted a follow-up; Luna completed the scoped fixes. No extra permission needed. Real microphone quality, AWS model access and natural interruption remain for the user's explicit live trial.
-- Next checkpoint: push feature/conversational-voice for the user's MR. User unlocks Settings, selects Tiffany/Matthew and starts Voice companion during a recipe. Local brag-output/ is preserved and ignored.
+- Phase: CI/CD prepared on feature/github-actions from main df712e2, publishing through the rachit-agentic/sous fork.
+- Active: CI tests, image smoke checks and main-only GHCR publishing; optional SSH deployment to one Linux amd64 server with host Nginx. Production proxy configuration and health endpoint added without changing local defaults.
+- Blockers: direct writes to rachit-j/sous are unavailable; the user created rachit-agentic/sous, where connector branch creation succeeded. Docker is not installed in this workspace, so image/Compose/server checks have not run here. No image publication or deployment has occurred.
+- Next checkpoint: open the fork PR into rachit-j/sous:feature/github-actions, review CI, configure server/production environment per docs/deployment.md, then merge to main when ready.
 
 ## Milestones
+
+- 2026-11-25: Published implementation commit03ecb4f to rachit-agentic/sous:feature/github-actions. GitHub tests passed; Linux amd64 image build and both Compose configuration checks passed. The first smoke request hit a TCP reset before Gunicorn was ready; expanded the bounded retry to handle startup resets and added failure logs. Upstream PR creation still returned connector403; the verified fork comparison is available for user submission. No deployment/publication to GHCR occurred on this feature branch.
+
+- 2026-11-25: Prepared GitHub Actions branch from main at user request. Added pinned Actions, Python/JavaScript checks, exact tested image publishing by commit SHA/digest, opt-in serialized SSH deployment, stable loopback routing, persistent Compose storage and prior-managed-release rollback. Opt-in host/proxy configuration retains origin/CSRF protections; /healthz avoids request-time database/provider calls. Unit discovery passed106 reported tests (7 optional skips) in9.686s; both synthetic real-localhost WebSocket cases separately passed in1.495s. actionlint1.7.7, YAML parsing, deployment Bash syntax, all three JavaScript syntax checks and Git whitespace checks passed. Bounded read-only workflow review found no P1/P2 issues. Docker/Compose runtime, actual Actions, Nginx/TLS and live SSH deployment remain unverified; no cloud/model/media calls. Claude CLI is absent in this environment; available bounded implementation/review agents handled configuration and review.
 
 - 2026-10-20: Refreshed repository context and fetched origin; no newer remote commits found. User authorized pushing the feature branch. Added root brag-output/ exclusion without changing its files. Fresh unittest discovery passed102 reported tests in13.355s (7 optional skips); all three JavaScript syntax checks and Git whitespace checks passed. Preparing cleanup commit and normal push; no application changes or live AWS/hardware tests.
 
