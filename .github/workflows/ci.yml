@@ -68,7 +68,12 @@ jobs:
           docker compose config --quiet
           docker compose -f compose.yaml -f compose.production.yaml config --quiet
           docker run -d --name sous-ci -p 127.0.0.1:5051:5000 sous:ci
-          curl --fail --silent --show-error --retry 20 --retry-delay 2 --retry-connrefused --max-time 5 http://127.0.0.1:5051/healthz
+          # Docker may accept the TCP connection before Gunicorn is ready and
+          # reset it; retry startup resets as well as refused connections.
+          if ! curl --fail --silent --show-error --retry 20 --retry-delay 2 --retry-all-errors --max-time 5 http://127.0.0.1:5051/healthz; then
+            docker logs sous-ci
+            exit 1
+          fi
           curl --fail --silent --show-error --max-time 5 http://127.0.0.1:5051/api/config > /dev/null
       - name: Remove disposable smoke container
         if: always()
