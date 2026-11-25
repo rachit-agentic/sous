@@ -12,6 +12,26 @@ Deployment is disabled until `DEPLOY_ENABLED=true`. The production job serialize
 
 ## Prepare the server once
 
+For an Ubuntu/Debian amd64 server with systemd, [setup-server.sh](../deploy/setup-server.sh) automates dependencies, the deployment user/public key, `/opt/sous/.env`, host Nginx, browser password protection, and Certbot HTTPS/renewal. Point DNS at the server and allow inbound ports80/443 before running. SSH must already work; firewall/SSH-daemon configuration is not changed.
+
+Generate a dedicated key **on your own computer**, keep its private half there for the GitHub secret, and copy only its `.pub` file and the setup script onto the server:
+
+```bash
+ssh-keygen -t ed25519 -f ./sous-deploy -N '' -C sous-github-actions
+scp ./sous-deploy.pub ./setup-server.sh YOUR_USER@YOUR_SERVER:/tmp/
+```
+
+Then on the server:
+
+```bash
+sudo bash /tmp/setup-server.sh \
+  --domain sous.example.com \
+  --email you@example.com \
+  --ssh-public-key-file /tmp/sous-deploy.pub
+```
+
+The script prompts for a browser-login password and any certificate account/terms consent. Defaults: deployment user `sous-deploy`, browser login `sous`, app port5050. Use `--ssh-host`/`--ssh-port` if the address Actions must SSH to differs from the web domain or port22. It prints the GitHub variables and server public host-key entry; put the matching **private** deployment key into GitHub's `DEPLOY_SSH_KEY` secret, never into chat or Git. Existing `.env` contents and browser password files are retained. If a settings file already exists, ensure its trusted hosts/port match this site. The deployment user gets Docker-group access, which grants control over the host through Docker. The script does not deploy Sous, configure GitHub settings, or log into GHCR. The steps below also document manual setup.
+
 1. Install Docker Engine, a recent Docker Compose v2 with `up --wait`, Nginx, Bash, and `flock` (util-linux). Allow the deployment SSH user to run Docker and write `/opt/sous`. No host Python or repository checkout is needed.
 2. Create `/opt/sous/.env`, owned by that user with mode `600`. It must exist, even if most providers are configured later through Settings. Add:
 
